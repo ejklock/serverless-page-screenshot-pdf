@@ -1,0 +1,15 @@
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Calling Cloudformation
+          deployment: staging
+          image: atlassian/default-image:3
+          script:
+            - envsubst < .env.pipeline > .env
+            - npm cache clean --force
+            - npm -g config set user root
+            - npm install
+            - npm install -g serverless
+            - serverless config credentials --provider aws --key ${AWS_ACCESS_KEY_ID} --secret ${AWS_SECRET_ACCESS_KEY}
+            - serverless deploy --verbose

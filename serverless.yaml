@@ -1,0 +1,37 @@
+console: true
+service: serverless-pdf-service
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-plugin-typescript
+  - serverless-plugin-optimize
+  - serverless-offline-scheduler
+  - serverless-offline
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  timeout: 120
+
+functions:
+  main:
+    memorySize: 2048
+    handler: src/lambda.handler
+    url: false
+    events:
+      - http:
+          method: any
+          path: /{any+}
+    package:
+      patterns:
+        - "!node_modules/.prisma/client/libquery_engine-*"
+        - "node_modules/.prisma/client/libquery_engine-rhel-*"
+        - "!node_modules/prisma/libquery_engine-*"
+        - "!node_modules/@prisma/engines/**"
+
+package:
+  individually: true
+  exclude:
+    - node_modules/puppeteer/.local-chromium/**
